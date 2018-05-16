@@ -1,8 +1,77 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.google.code.gson:gson:2.8.0"
     compile "org.java-websocket:Java-WebSocket:1.3.8"
 }
+
+group = "microsoft.aspnet"
+version = "1.0.1"
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
+
+def pomConfig = {
+    licenses {
+        license {
+            name "Apache 2.0 License"
+            url "http://www.apache.org/licenses/LICENSE-2.0"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "blokaly"
+            name "Blokaly"
+            email "blokaly@users.noreply.github.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/finfabrik/java-client"
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId 'signalr-client-sdk'
+            version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'SignalR java client fork')
+                root.appendNode('name', 'signalr-client-sdk')
+                root.appendNode('url', 'https://github.com/finfabrik/java-client')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getProperty('bintray.user')
+    key = System.getProperty('bintray.key')
+    publications = ['mavenPublication']
+
+    pkg {
+        repo = 'signalr'
+        name = 'signalr-client-sdk'
+        licenses = ['Apache 2.0']
+        vcsUrl = 'https://github.com/finfabrik/java-client.git'
+        version {
+            name = project.version
+            desc = project.version
+            released  = new Date()
+        }
+    }
+
+}
+
 
