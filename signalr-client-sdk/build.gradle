@@ -12,7 +12,7 @@ dependencies {
 }
 
 group = "microsoft.aspnet"
-version = "1.0.1"
+version = "1.0.3"
 sourceCompatibility = "1.6"
 targetCompatibility = "1.6"
 
