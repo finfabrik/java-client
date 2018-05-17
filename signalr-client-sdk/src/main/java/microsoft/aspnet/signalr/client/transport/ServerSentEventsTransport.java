@@ -94,13 +94,16 @@ public class ServerSentEventsTransport extends HttpClientTransport {
                         String currentData = buffer.toString();
                         if (currentData.endsWith(END_OF_SSE_MESSAGE)) {
                             currentData = currentData.trim();
-                            log("Found new data: " + currentData, LogLevel.Verbose);
+                            if (getLogger().isVerbose()) {
+                                log("Found new data: " + currentData, LogLevel.Verbose);
+                            }
                             if (currentData.equals(DATA_INITIALIZED)) {
                                 log("Initialization message found", LogLevel.Verbose);
                             } else {
                                 String content = currentData.substring(SSE_DATA_PREFIX_LENGTH).trim();
-
-                                log("Trigger onData: " + content, LogLevel.Verbose);
+                                if (getLogger().isVerbose()) {
+                                    log("Trigger onData: " + content, LogLevel.Verbose);
+                                }
                                 callback.onData(content);
                             }
 

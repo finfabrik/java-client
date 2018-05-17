@@ -49,7 +49,9 @@ public class TransportHelper {
         }
 
         if (json.get("I") != null) {
-            logger.log("Invoking message received with: " + json.toString(), LogLevel.Verbose);
+            if (logger.isVerbose()) {
+                logger.log("Invoking message received with: " + json.toString(), LogLevel.Verbose);
+            }
             connection.onReceived(json);
         } else {
 
@@ -72,7 +74,9 @@ public class TransportHelper {
 
             if (json.get("G") != null) {
                 String groupsToken = json.get("G").getAsString();
-                logger.log("Group token received: " + groupsToken, LogLevel.Verbose);
+                if (logger.isVerbose()) {
+                    logger.log("Group token received: " + groupsToken, LogLevel.Verbose);
+                }
                 connection.setGroupsToken(groupsToken);
             }
 
@@ -81,7 +85,9 @@ public class TransportHelper {
 
                 if (json.get("C") != null) {
                     String messageId = json.get("C").getAsString();
-                    logger.log("MessageId received: " + messageId, LogLevel.Verbose);
+                    if (logger.isVerbose()) {
+                        logger.log("MessageId received: " + messageId, LogLevel.Verbose);
+                    }
                     connection.setMessageId(messageId);
                 }
 
@@ -90,9 +96,9 @@ public class TransportHelper {
 
                 for (int i = 0; i < size; i++) {
                     JsonElement message = messagesArray.get(i);
-                    JsonElement processedMessage = null;
-
-                    logger.log("Invoking OnReceived with: " + processedMessage, LogLevel.Verbose);
+                    if (logger.isVerbose()) {
+                        logger.log("Invoking OnReceived with: " + message, LogLevel.Verbose);
+                    }
                     connection.onReceived(message);
                 }
             }

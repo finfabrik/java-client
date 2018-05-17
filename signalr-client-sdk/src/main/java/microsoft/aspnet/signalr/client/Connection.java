@@ -144,12 +144,15 @@ public class Connection implements ConnectionBase {
             url += "/";
         }
 
+        mLogger = logger;
+
         log("Initialize the connection", LogLevel.Information);
-        log("Connection data: " + url + " - " + queryString == null ? "" : queryString, LogLevel.Verbose);
+        if (mLogger.isVerbose()) {
+            log("Connection data: " + url + " - " + queryString == null ? "" : queryString, LogLevel.Verbose);
+        }
 
         mUrl = url;
         mQueryString = queryString;
-        mLogger = logger;
         mJsonParser = new JsonParser();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -361,12 +364,16 @@ public class Connection implements ConnectionBase {
 
                         mConnectionId = negotiationResponse.getConnectionId();
                         mConnectionToken = negotiationResponse.getConnectionToken();
-                        log("ConnectionId: " + mConnectionId, LogLevel.Verbose);
-                        log("ConnectionToken: " + mConnectionToken, LogLevel.Verbose);
+                        if (mLogger.isVerbose()) {
+                            log("ConnectionId: " + mConnectionId, LogLevel.Verbose);
+                            log("ConnectionToken: " + mConnectionToken, LogLevel.Verbose);
+                        }
 
                         KeepAliveData keepAliveData = null;
                         if (negotiationResponse.getKeepAliveTimeout() > 0) {
-                            log("Keep alive timeout: " + negotiationResponse.getKeepAliveTimeout(), LogLevel.Verbose);
+                            if (mLogger.isVerbose()) {
+                                log("Keep alive timeout: " + negotiationResponse.getKeepAliveTimeout(), LogLevel.Verbose);
+                            }
                             keepAliveData = new KeepAliveData((long) (negotiationResponse.getKeepAliveTimeout() * 1000));
                         }
 
@@ -668,8 +675,9 @@ public class Connection implements ConnectionBase {
             final Connection that = this;
 
             ConnectionType connectionType = isReconnecting ? ConnectionType.Reconnection : ConnectionType.InitialConnection;
-
-            log("Starting transport for " + connectionType.toString(), LogLevel.Verbose);
+            if (mLogger.isVerbose()) {
+                log("Starting transport for " + connectionType.toString(), LogLevel.Verbose);
+            }
             SignalRFuture<Void> future = mTransport.start(this, connectionType, new DataResultCallback() {
                 @Override
                 public void onData(String data) {
@@ -697,8 +705,10 @@ public class Connection implements ConnectionBase {
                     @Override
                     public void run(Void obj) throws Exception {
                         synchronized (mStartLock) {
-                            log("Entered startLock after transport was started", LogLevel.Verbose);
-                            log("Current state: " + mState, LogLevel.Verbose);
+                            if (mLogger.isVerbose()) {
+                                log("Entered startLock after transport was started", LogLevel.Verbose);
+                                log("Current state: " + mState, LogLevel.Verbose);
+                            }
                             if (changeState(ConnectionState.Reconnecting, ConnectionState.Connected)) {
 
                                 log("Starting Heartbeat monitor", LogLevel.Verbose);
@@ -806,7 +816,9 @@ public class Connection implements ConnectionBase {
 
     protected void log(String message, LogLevel level) {
         if (message != null & mLogger != null) {
-            mLogger.log(getSourceNameForLog() + " - " + message, level);
+            if ( level!=LogLevel.Verbose || mLogger.isVerbose()) {
+                mLogger.log(getSourceNameForLog() + " - " + message, level);
+            }
         }
     }
 
@@ -821,7 +833,9 @@ public class Connection implements ConnectionBase {
     @Override
     public void onReceived(JsonElement message) {
         if (mOnReceived != null && getState() == ConnectionState.Connected) {
-            log("Invoking messageReceived with: " + message, LogLevel.Verbose);
+            if (mLogger.isVerbose()) {
+                log("Invoking messageReceived with: " + message, LogLevel.Verbose);
+            }
             try {
                 mOnReceived.onMessageReceived(message);
             } catch (Throwable error) {

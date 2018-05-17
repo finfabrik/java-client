@@ -168,7 +168,7 @@ public class Request {
      *            the provided logger
      */
     public void log(Logger logger) {
-        if (logger != null) {
+        if (logger != null && logger.isVerbose()) {
             logger.log("URL: " + getUrl(), LogLevel.Verbose);
             logger.log("VERB: " + getVerb(), LogLevel.Verbose);
 

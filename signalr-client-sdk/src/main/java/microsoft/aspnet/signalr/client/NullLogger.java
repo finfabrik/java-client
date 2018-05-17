@@ -14,4 +14,9 @@ public class NullLogger implements Logger {
     @Override
     public void log(String message, LogLevel level) {
     }
+
+    @Override
+    public boolean isVerbose() {
+        return false;
+    }
 }

@@ -239,7 +239,7 @@ public class HubProxy {
                             }
 
                             if (result.getResult() != null && resultClass != null) {
-                                log("Found result invoking method on hub: " + result.getResult(), LogLevel.Information);
+                                log("Found result invoking method on hub: " + result.getResult(), LogLevel.Verbose);
                                 resultObject = mConnection.getGson().fromJson(result.getResult(), resultClass);
                             }
                         } catch (Exception e) {

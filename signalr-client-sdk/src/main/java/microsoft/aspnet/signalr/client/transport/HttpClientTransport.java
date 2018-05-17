@@ -209,11 +209,16 @@ public abstract class HttpClientTransport implements ClientTransport {
     }
 
     protected void log(String message, LogLevel level) {
-        mLogger.log(getName() + " - " + message, level);
+        if ( level!=LogLevel.Verbose || mLogger.isVerbose()) {
+            mLogger.log(getName() + " - " + message, level);
+        }
     }
 
     protected void log(Throwable error) {
         mLogger.log(getName() + " - Error: " + error.toString(), LogLevel.Critical);
     }
 
+    protected Logger getLogger() {
+        return mLogger;
+    }
 }

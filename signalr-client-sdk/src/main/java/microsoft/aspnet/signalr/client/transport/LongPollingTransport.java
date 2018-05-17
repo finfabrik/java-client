@@ -108,8 +108,9 @@ public class LongPollingTransport extends HttpClientTransport {
                             if (responseData != null) {
                                 responseData = responseData.trim();
                             }
-
-                            log("Trigger onData with data: " + responseData, LogLevel.Verbose);
+                            if (getLogger().isVerbose()) {
+                                log("Trigger onData with data: " + responseData, LogLevel.Verbose);
+                            }
                             callback.onData(responseData);
 
                             if (!mConnectionFuture.isCancelled() && connection.getState() == ConnectionState.Connected) {

@@ -16,4 +16,8 @@ public class ConsoleLogger implements Logger {
         System.out.println(level.toString() + " - " + message);
     }
 
+    @Override
+    public boolean isVerbose() {
+        return true;
+    }
 }

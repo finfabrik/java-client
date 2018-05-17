@@ -80,11 +80,15 @@ public class HubConnection extends Connection {
                 HubResult result = mGson.fromJson(message, HubResult.class);
     
                 String id = result.getId().toLowerCase(Locale.getDefault());
-                log("Result Id: " + id, LogLevel.Verbose);
-                log("Result Data: " + result.getResult(), LogLevel.Verbose);
-    
+                if (getLogger().isVerbose()) {
+                    log("Result Id: " + id, LogLevel.Verbose);
+                    log("Result Data: " + result.getResult(), LogLevel.Verbose);
+                }
+
                 if (mCallbacks.containsKey(id)) {
-                    log("Get and remove callback with id: " + id, LogLevel.Verbose);
+                    if (getLogger().isVerbose()) {
+                        log("Get and remove callback with id: " + id, LogLevel.Verbose);
+                    }
                     Action<HubResult> callback = mCallbacks.remove(id);
     
                     try {
@@ -99,21 +103,27 @@ public class HubConnection extends Connection {
                 log("Getting HubInvocation from message", LogLevel.Verbose);
     
                 String hubName = invocation.getHub().toLowerCase(Locale.getDefault());
-                log("Message for: " + hubName, LogLevel.Verbose);
-    
+                if (getLogger().isVerbose()) {
+                    log("Message for: " + hubName, LogLevel.Verbose);
+                }
+
                 if (mHubs.containsKey(hubName)) {
                     HubProxy hubProxy = mHubs.get(hubName);
                     if (invocation.getState() != null) {
                         for (String key : invocation.getState().keySet()) {
                             JsonElement value = invocation.getState().get(key);
-                            log("Setting state for hub: " + key + " -> " + value, LogLevel.Verbose);
+                            if (getLogger().isVerbose()) {
+                                log("Setting state for hub: " + key + " -> " + value, LogLevel.Verbose);
+                            }
                             hubProxy.setState(key, value);
                         }
                     }
     
                     String eventName = invocation.getMethod().toLowerCase(Locale.getDefault());
-                    log("Invoking event: " + eventName + " with arguments " + arrayToString(invocation.getArgs()), LogLevel.Verbose);
-    
+                    if (getLogger().isVerbose()) {
+                        log("Invoking event: " + eventName + " with arguments " + arrayToString(invocation.getArgs()), LogLevel.Verbose);
+                    }
+
                     try {
                         hubProxy.invokeEvent(eventName, invocation.getArgs());
                     } catch (Exception e) {
@@ -153,8 +163,9 @@ public class HubConnection extends Connection {
         }
 
         String connectionData = jsonArray.toString();
-
-        log("Getting connection data: " + connectionData, LogLevel.Verbose);
+        if (getLogger().isVerbose()) {
+            log("Getting connection data: " + connectionData, LogLevel.Verbose);
+        }
         return connectionData;
     }
 
@@ -165,13 +176,17 @@ public class HubConnection extends Connection {
     }
 
     private void clearInvocationCallbacks(String error) {
-        log("Clearing invocation callbacks: " + error, LogLevel.Verbose);
+        if (getLogger().isVerbose()) {
+            log("Clearing invocation callbacks: " + error, LogLevel.Verbose);
+        }
         HubResult result = new HubResult();
         result.setError(error);
 
         for (String key : mCallbacks.keySet()) {
             try {
-                log("Invoking callback with empty result: " + key, LogLevel.Verbose);
+                if (getLogger().isVerbose()) {
+                    log("Invoking callback with empty result: " + key, LogLevel.Verbose);
+                }
                 mCallbacks.get(key).run(result);
             } catch (Exception e) {
             }
@@ -229,7 +244,9 @@ public class HubConnection extends Connection {
      */
     String registerCallback(Action<HubResult> callback) {
         String id = mCallbackId.toString().toLowerCase(Locale.getDefault());
-        log("Registering callback: " + id, LogLevel.Verbose);
+        if (getLogger().isVerbose()) {
+            log("Registering callback: " + id, LogLevel.Verbose);
+        }
         mCallbacks.put(id, callback);
         mCallbackId++;
         return id;
@@ -242,7 +259,9 @@ public class HubConnection extends Connection {
      *            Id for the callback to remove
      */
     void removeCallback(String callbackId) {
-        log("Removing callback: " + callbackId, LogLevel.Verbose);
+        if (getLogger().isVerbose()) {
+            log("Removing callback: " + callbackId, LogLevel.Verbose);
+        }
         mCallbacks.remove(callbackId.toLowerCase(Locale.getDefault()));
     }
 

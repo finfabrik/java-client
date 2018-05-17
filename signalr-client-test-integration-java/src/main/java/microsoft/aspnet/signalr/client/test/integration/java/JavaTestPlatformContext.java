@@ -40,6 +40,11 @@ public class JavaTestPlatformContext implements TestPlatformContext {
                     System.out.println("LOG: " + level.toString() + ": " + message);
                 }
             }
+
+            @Override
+            public boolean isVerbose() {
+                return true;
+            }
         };
     }
 

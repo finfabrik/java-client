@@ -19,4 +19,6 @@ public interface Logger {
      *            Message level
      */
     public void log(String message, LogLevel level);
+
+    public boolean isVerbose();
 }
